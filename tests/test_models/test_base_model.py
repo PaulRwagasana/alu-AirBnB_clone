@@ -1,6 +1,7 @@
 #!usr bin/env python3
 import unittest
 from models.base_model import BaseModel
+from datetime import datetime
 
 
 class TestBaseModel(unittest.TestCase):
@@ -45,3 +46,7 @@ class TestBaseModel(unittest.TestCase):
         instance = BaseModel()
         expected_str = f"[BaseModel] ({instance.id}) {instance.__dict__}"
         self.assertEqual(str(instance), expected_str)
+
+
+if __name__ == '__main__':
+    unittest.main()
