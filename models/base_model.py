@@ -18,16 +18,42 @@ class BaseModel:
 
     def __str__(self):
          return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
-    
-    def save(self):
-        '''updates the public instance attribute updated_at with the current datetime'''
-        self.updated_at = datetime.datetime.now()
-    
-    def to_dict(self):
-        '''returns a dictionary containing all keys/values of __dict__ of the instance'''
-        new_dict = self.__dict__.copy()
-        new_dict['__class__'] = self.__class__.__name__
-        new_dict['created_at'] = self.created_at.isoformat()
-        new_dict['updated_at'] = self.updated_at.isoformat()
-        return new_dict
-    
+    def test_save(self):
+        """Test save method updates updated_at."""
+        instance = BaseModel()
+        old_updated_at = instance.updated_at
+        instance.save()
+        self.assertNotEqual(instance.updated_at, old_updated_at)
+        self.assertTrue(instance.updated_at > old_updated_at)
+
+    def test_to_dict(self):
+        """Test to_dict method."""
+        instance = BaseModel()
+        instance_dict = instance.to_dict()
+        self.assertEqual(instance_dict["__class__"], "BaseModel")
+        self.assertEqual(instance_dict["id"], instance.id)
+        self.assertEqual(
+            instance_dict["created_at"], instance.created_at.isoformat()
+        )
+        self.assertEqual(
+            instance_dict["updated_at"], instance.updated_at.isoformat()
+        )
+
+    def test_id(self):
+        """Test id attribute is unique and a string."""
+        instance1 = BaseModel()
+        instance2 = BaseModel()
+        self.assertIsInstance(instance1.id, str)
+        self.assertIsInstance(instance2.id, str)
+        self.assertNotEqual(instance1.id, instance2.id)
+
+    def test_created_at(self):
+        """Test created_at attribute is a datetime object."""
+        instance = BaseModel()
+        self.assertIsInstance(instance.created_at, datetime)
+
+    def test_str(self):
+        """Test __str__ method."""
+        instance = BaseModel()
+        expected_str = f"[BaseModel] ({instance.id}) {instance.__dict__}"
+        self.assertEqual(str(instance), expected_str)
