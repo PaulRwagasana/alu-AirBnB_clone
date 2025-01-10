@@ -25,7 +25,7 @@ class HBNBCommand(cmd.Cmd):
     def do_EOF(self, arg):
         """
         Quit the console.
-
+        q
         Usage:
             EOF
         """
