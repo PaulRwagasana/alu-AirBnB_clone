@@ -1,52 +1,43 @@
-# !/usr/bin/python3
-"""
-Test cases for the BaseModel class.
-"""
+#!/usr/bin/python3
+"""This module contains the BaseModel class"""
+import uuid
+from datetime import datetime
 
-import unittest
-from models.base_model import BaseModel
+class BaseModel:
+    def __init__(self, *args, **kwargs):
+        """Initialization of the BaseModel class"""
+        if kwargs:
+            for key, value in kwargs.items():
+                if key == 'created_at' or key == 'updated_at':
+                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+                if key != '__class__':
+                    setattr(self, key, value)
+            self.__class__ = self.__class__
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+            from models.engine import storage
+            storage.new(self)
 
-class TestBasemodel(unittest.TestCase):
-    """
-    Test cases for the BaseModel class.
-    """
-    def test_init(self):
-        """
-        Tests that a BaseModel instance is properly initialized with an id,
-        created_at and updated_at attributes.
-        """
-        my_model = BaseModel()
-        self.assertIsNotNone(my_model.id)
-        self.assertIsNotNone(my_model.created_at)
-        self.assertIsNotNone(my_model.updated_at)
+    def __str__(self):
+        """String representation of the BaseModel class"""
+        return "[{}] ({}) {}".format(
+            self.__class__.__name__,
+            self.id,
+            self.__dict__
+        )
 
-    def test_save(self):
-        """
-        Tests that the save method of a BaseModel instance updates the
-        updated_at attribute. 
-        """
-        my_model = BaseModel()
-        initial_updated_at = my_model.updated_at
-        my_model.save()
-        current_updated_at = my_model.updated_at
-        self.assertNotEqual(initial_updated_at, current_updated_at)
+    def save(self):
+        """Update the updated_at attribute with the current datetime and save to storage"""
+        self.updated_at = datetime.now()
+        from models.engine import storage
+        storage.save()
 
-    def test_to_dict(self):
-       
-        my_model = BaseModel()
-        my_model_dict = my_model.to_dict()
-        self.assertIsInstance(my_model_dict, dict)
-        self.assertEqual(my_model_dict["__class__"], 'BaseModel')
-        self.assertEqual(my_model_dict['id'], my_model.id)
-        self.assertEqual(my_model_dict['created_at'], my_model.created_at.isoformat())
-        self.assertEqual(my_model_dict['updated_at'], my_model.created_at.isoformat())
-
-    def test_str(self):
-        
-        my_model = BaseModel()
-        self.assertTrue(str(my_model).startswith("[BaseModel]"))
-        self.assertIn(my_model.id, str(my_model))
-        self.assertIn(str(my_model.to_dict()), str(my_model))
-
-if __name__ == '_main_':
-    unittest.main()
+    def to_dict(self):
+        """Returns the dict representation of BaseModel class"""
+        dictionary = self.__dict__.copy()
+        dictionary['__class__'] = self.__class__.__name__
+        dictionary['created_at'] = self.created_at.isoformat()
+        dictionary['updated_at'] = self.updated_at.isoformat()
+        return dictionary
