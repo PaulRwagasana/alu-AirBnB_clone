@@ -1,10 +1,8 @@
 #!/usr/bin/python3
 """This module contains the BaseModel class"""
-# import os
-# import sys
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 import uuid
 from datetime import datetime
+from models.engine.file_storage import FileStorage
 
 class BaseModel:
     def __init__(self, *args, **kwargs):
@@ -34,8 +32,8 @@ class BaseModel:
     def save(self):
         """Update the updated_at attribute with the current datetime and save to storage"""
         self.updated_at = datetime.now()
-        from models.engine import storage
-        storage.save()
+        # from models.engine import storage
+        Filestorage.save()
 
     def to_dict(self):
         """Returns the dict representation of BaseModel class"""
