@@ -3,5 +3,5 @@ from models.base_model import BaseModel
 
 '''State class'''
 class State(BaseModel):
-    '''RState class that inherits from BaseModel'''
+    '''State class that inherits from BaseModel'''
     pass
