@@ -2,6 +2,7 @@
 """This module contains the BaseModel class"""
 import uuid
 from datetime import datetime
+from models.engine.__init__ import storage
 
 class BaseModel:
     def __init__(self, *args, **kwargs):
@@ -31,7 +32,6 @@ class BaseModel:
     def save(self):
         """Update the updated_at attribute with the current datetime and save to storage"""
         self.updated_at = datetime.now()
-        from models.engine import storage
         storage.save()
 
     def to_dict(self):
