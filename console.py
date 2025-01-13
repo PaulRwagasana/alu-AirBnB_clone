@@ -4,6 +4,7 @@
 """
 
 import cmd
+import models
 from models import storage
 from models.base_model import BaseModel
 
