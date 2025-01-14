@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 """
- model containd command interpreter for this project
+ model contains command interpreter for this project
 """
 
 import cmd
+import models
 from models import storage
 from models.base_model import BaseModel
 
