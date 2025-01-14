@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
- model containd command interpreter for this project
+ model contains command interpreter for this project
 """
 
 import cmd
