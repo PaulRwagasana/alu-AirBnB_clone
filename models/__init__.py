@@ -1,4 +1,8 @@
-#!usr/bin/python3
+#!/usr/bin/python3
+
+"""
+This module serves as the initialization file for the models package.
+"""
 from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
 from models.user import User
