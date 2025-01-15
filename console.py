@@ -1,168 +1,183 @@
+<<<<<<< HEAD
+=======
 #!/usr/bin/python3
-"""
-This module contains the entry point for the command interpreter.
-"""
+"""This module contains the entry point of the command interpreter"""
 
 import cmd
+from models import storage
 from models.base_model import BaseModel
-from models.user import User
-from models.amenity import Amenity
-from models.city import City
-from models.place import Place
-from models.review import Review
-from models.state import State
-from models.engine.file_storage import FileStorage
-import inspect
-import json
-import sys
-
 
 class HBNBCommand(cmd.Cmd):
-    """
-    HBNBCommand class for the command interpreter.
+    prompt = "(hbnb) "
 
-    commands:
-    quit - exit the program
-    EOF - exit the program
-    """
+    def do_quit(self, arg):
+        """
+        Quit the console.
 
-    prompt = '(hbnb) '
-    classes = {"Amenity": Amenity, "BaseModel": BaseModel,
-               "City": City, "Place": Place, "Review": Review,
-               "State": State, "User": User}
+        Usage:
+            quit
+            q
+            exit
+        """
+        return True
+
+    do_q = do_quit
+    do_exit = do_quit
+
+    def do_EOF(self, arg):
+        """
+        Quit the console.
+
+        Usage:
+            EOF
+        """
+        return True
 
     def emptyline(self):
         """
-        Overrides the default emptyline method to do nothing
+        An empty line + ENTER shouldn't execute anything
         """
         pass
 
-    def do_create(self, args):
-        '''
-        Creates and saves a new object
-        ex: create BaseModel
-        '''
-        if not args:
-            print("**class name missing**")
-        elif args not in self.classes:
-            print("**class doesn't exist**")
-        else:
-            new_instance = self.classes[args]()
-            new_instance.save()
-            print(new_instance.id)
+    def do_create(self, arg):
+        """
+        Creates a new inst of BaseModel, saves it, and prints the id.
 
-    def do_show(self, args):
-        '''
-        Shows the dict representation of an object
-        ex: show BaseModel 12345
-        '''
-        if not args:
+        Usage: create <class_name>
+
+        Args:
+            arg (str): The argument should contain the <class_name>.
+        """
+
+        class_name = arg.split(" ")[0]
+
+        if not class_name:
             print("** class name missing **")
-        else:
-            args_list = args.split()
-            if args_list[0] not in self.classes:
-                print("** class doesn't exist **")
-            elif len(args_list) < 2:
-                print("** instance id missing **")
-            else:
-                key = args_list[0] + "." + args_list[1]
-                all_objs = FileStorage().all()
-                if key not in all_objs:
-                    print("** no instance found **")
-                else:
-                    print(all_objs[key])
-
-    def do_destroy(self, args):
-        '''
-        Deletes an object
-        based on its class and id
-        ex: destroy BaseModel 1234567
-        '''
-        if not args:
-            print("** class name missing **")
-        else:
-            args_list = args.split()
-            if args_list[0] not in self.classes:
-                print("** class doesn't exist **")
-            elif len(args_list) < 2:
-                print("** instance id missing **")
-            else:
-                key = args_list[0] + "." + args_list[1]
-                all_objs = FileStorage().all()
-                if key not in all_objs:
-                    print("** no instance found **")
-                else:
-                    del all_objs[key]
-                    FileStorage().save()
-
-    def do_all(self, args):
-        '''
-        Shows all objects in storage or all objects of a certain class
-        ex: all
-        or
-        ex: all BaseModel
-        '''
-        all_objs = FileStorage().all()
-        if not args:
-            print([str(obj) for obj in all_objs.values()])
-        elif args not in self.classes:
+        elif class_name not in models.classes:
             print("** class doesn't exist **")
         else:
-            class_objs = {k: v for k, v in all_objs.items() if args in k}
-            print([str(obj) for obj in class_objs.values()])
+            instance = models.classes[class_name]()
+            instance.save()
+            print(instance.id)
 
-    def do_update(self, args):
+    def do_show(self, arg):
         """
-        Update an object by add or updating an attribute
-        ex: update BaseModel 1234-1234-1234 email "username@email.com"
+        Displays the string representation of an instance.
+
+        Usage: create <class_name> <instance_id>
+
+        Args:
+            arg (str): Argument should contain <class_name> <instance_id>.
         """
-        if not args:
+
+        split_args = arg.split(" ")
+        class_name = split_args[0] if len(split_args) > 0 else None
+        obj_id = split_args[1] if len(split_args) > 1 else None
+
+        if not class_name:
             print("** class name missing **")
+        elif class_name not in models.classes:
+            print("** class doesn't exist **")
+        elif not obj_id:
+            print("** instance id missing **")
         else:
-            args_list = args.split()
-            if args_list[0] not in self.classes:
-                print("** class doesn't exist **")
-            elif len(args_list) < 2:
-                print("** instance id missing **")
+            key = f"{class_name}.{obj_id}"
+            if key in models.loaded_objects:
+                print(models.loaded_objects[key])
             else:
-                key = args_list[0] + "." + args_list[1]
-                all_objs = FileStorage().all()
-                if key not in all_objs:
-                    print("** no instance found **")
-                elif len(args_list) < 3:
-                    print("** attribute name missing **")
-                elif len(args_list) < 4:
-                    print("** value missing **")
-                else:
-                    obj = all_objs[key]
-                    setattr(obj, args_list[2], eval(args_list[3]))
-                    obj.save()
+                print("** no instance found **")
 
-    def do_count(self, args):
+    def do_destroy(self, arg):
         """
-        Return the number of instance of a class
+        Deletes an instance based on the class name and id.
+
+        Usage: destroy <class_name> <instance_id>
+
+        Args:
+            arg (str): Argument should contain <class_name> <instance_id>.
         """
-        if not args:
+
+        split_args = arg.split(" ")
+        class_name = split_args[0] if len(split_args) > 0 else None
+        obj_id = split_args[1] if len(split_args) > 1 else None
+
+        if not class_name:
             print("** class name missing **")
+        elif class_name not in models.classes:
+            print("** class doesn't exist **")
+        elif not obj_id:
+            print("** instance id missing **")
         else:
-            class_objs = {
-                k: v for k,
-                v in FileStorage().all().items() if args in k}
-            print(len(class_objs))
+            key = f"{class_name}.{obj_id}"
+            if key in models.loaded_objects:
+                del models.loaded_objects[key]
+                models.storage.save()
+            else:
+                print("** no instance found **")
 
-    def do_quit(self, args):
-        """
-        Exit the program.
-        """
-        print("Goodbye!")
-        return True
+    do_delete = do_destroy
 
-    def do_EOF(self, args):
+    def do_all(self, arg):
         """
-        (Ctrl+D or Ctrl+Z) EOF signal to exit the program
-        """
-        return True
+        Prints all string representation of all instances.
 
+        Usage:
+            all
+            all <class_name>
+
+        Args:
+            arg (str): The argument should contain <class_name>.
+        """
+
+        split_args = arg.split(" ")
+        class_name = split_args[0] if len(split_args) > 0 else None
+
+        if not class_name:
+            print([str(obj) for obj in models.loaded_objects.values()])
+        elif class_name not in models.classes:
+            print("** class doesn't exist **")
+        else:
+            print([str(obj) for obj in models.loaded_objects.values()
+                   if type(obj) == models.classes[class_name]])
+     def do_update(self, arg):
+        """
+        Updates an instance based on the class name and id.
+
+        Usage: update <class_name> <instance_id> <attr_name> "<attr_value>"
+
+        Args:
+            arg (str): <class_name> <instance_id> <attr_name> <attr_value>.
+        """
+
+        split_args = arg.split(" ")
+        class_name = split_args[0] if len(split_args) > 0 else None
+        obj_id = split_args[1] if len(split_args) > 1 else None
+        attr_name = split_args[2] if len(split_args) > 2 else None
+        attr_value = split_args[3] if len(split_args) > 3 else None
+
+        if not class_name:
+            print("** class name missing **")
+        elif class_name not in models.classes:
+            print("** class doesn't exist **")
+        elif not obj_id:
+            print("** instance id missing **")
+        elif not attr_name:
+            print("** attribute name missing **")
+        elif not attr_value:
+            print("** value missing **")
+        else:
+            key = f"{class_name}.{obj_id}"
+            forbidden_attrs = ['id', 'created_at', 'updated_at']
+            if key in models.loaded_objects:
+                if attr_name not in forbidden_attrs:
+                    setattr(models.loaded_objects[key], attr_name,
+                            self.remove_quotes(attr_value))
+                    models.storage.save()
+                else:
+                    print(f"** Can't update the {attr_name} attribute **")
+            else:
+                print("** no instance found **")
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
+>>>>>>> a048519eae59f6bbc30c66a73a7b56466f5a471b
