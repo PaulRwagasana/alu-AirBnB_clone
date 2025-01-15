@@ -49,5 +49,6 @@ class FileStorage:
                     FileStorage.__objects[key] = BaseModel(**value)
         else:
             pass    
+            
 storage = FileStorage()
 storage.reload()
