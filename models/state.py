@@ -1,14 +1,13 @@
-#!usr/bin/python3
+#!/usr/bin/python3
+"""
+Module documentation
+"""
+
 from models.base_model import BaseModel
 
 
 class State(BaseModel):
-    '''State class that inherits from BaseModel'''
-    pass
-        """
-    This is the state class
-
-    Attributes:
-        name (str): The name of the state
+    """
+    State class
     """
     name = ""

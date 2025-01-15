@@ -1,10 +1,14 @@
-#!usr/bin/env python3
-from models.base_model import BaseModel
+#!/usr/bin/python3
+"""
+Module documentation
+"""
 
-'''City class'''
+from models.base_model import BaseModel
 
 
 class City(BaseModel):
-    '''City representation'''
+    """
+    City class
+    """
     state_id = ""
     name = ""
