@@ -2,9 +2,9 @@
 """
 Test cases for the BaseModel class.
 """
-
 import unittest
 from models.base_model import BaseModel
+
 
 class TestBasemodel(unittest.TestCase):
     """

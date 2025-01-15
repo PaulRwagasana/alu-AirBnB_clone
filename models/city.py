@@ -2,6 +2,8 @@
 from models.base_model import BaseModel
 
 '''City class'''
+
+
 class City(BaseModel):
     '''City representation'''
     state_id = ""
