@@ -1,1 +1,1 @@
-to be updated
+Starter static website for the airbnb clone project with simple features
