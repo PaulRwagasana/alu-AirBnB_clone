@@ -47,7 +47,7 @@ This is how to run specific tests
 
 ### Authors
 
-<b>Kelvin Rwihimba</b>
-<b>Paul Rwagasana</b>
+<p><b>Kelvin Rwihimba</b></p>
+<P><b>Paul Rwagasana</b></P>
 
 
