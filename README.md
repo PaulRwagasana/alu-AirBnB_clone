@@ -22,6 +22,7 @@ The command interpreter allows management of project objects by:
 To start the command interpreter, run:
 ```bash
 ./console.py
+
 (hbnb) help
 
 Documented commands (type help <topic>):
@@ -32,15 +33,21 @@ EOF  all  create  delete  destroy  exit  help  q  quit  show  update
 (hbnb) 
 (hbnb) quit
 
-### How to Use the Interpreter
-The interpreter supports commands such as create, show, update, destroy, and more to manage the data and objects effectively.
-
+```
 ### Tests
+
+this is how to run all tests:
+```bash
  python3 -m unittest discover tests
-Running a test
+```
+This is how to run specific tests
+```bash
  python3 -m unittest tests/test_models/test_city.py
+```
 
 ### Authors
 
-Kelvin Rwihimba
-Paul Rwagasana
+<b>Kelvin Rwihimba</b>
+<b>Paul Rwagasana</b>
+
+
